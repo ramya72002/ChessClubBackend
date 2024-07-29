@@ -76,6 +76,16 @@ def signin():
     else:
         return jsonify({'error': 'Email not registered. Please sign up.'}), 404
 
-
+@app.route('/Club_users', methods=['GET'])
+def get_users():
+    try:
+        # Fetch all records from the collection
+        users = users_collection.find({}, {'_id': 0})  # Exclude the _id field
+        # Convert MongoDB documents to a list of dictionaries
+        users_list = list(users)
+        return jsonify(users_list)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=80)
