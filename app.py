@@ -30,36 +30,36 @@ def time_now():
 def signup():
     user_data = request.get_json()
     if user_data:
-        parent_first_name = user_data.get('parentFirstName')
-        parent_last_name = user_data.get('parentLastName')
-        kid_first_name = user_data.get('kidFirstName')
-        kid_last_name = user_data.get('kidLastName')
+        parent_name = user_data.get('parentName')
+        kidnames = [
+            user_data.get('kidName1'),
+            user_data.get('kidName2'),
+            user_data.get('kidName3')
+        ]
         email = user_data.get('email')
-        phone_number = user_data.get('phone')
-
-        # Check if user already exists
-        existing_user = users_collection.find_one({
-            'email': email,
-            'phone': phone_number
-        })
+        phone = user_data.get('phone')
+        
+        # Check if email already exists
+        existing_user = users_collection.find_one({'email': email})
         if existing_user:
             return jsonify({'error': 'User already exists. Please login.'}), 400
 
-        # Add new user data
-        new_user = {
-            'parentFirstName': parent_first_name,
-            'parentLastName': parent_last_name,
-            'kidFirstName': kid_first_name,
-            'kidLastName': kid_last_name,
-            'email': email,
-            'phone': phone_number,
-            'createdAt': time_now()
-        }
-        users_collection.insert_one(new_user)
-        return jsonify({'success': True}), 201
+        # Insert a record for each kid
+        inserted_ids = []
+        for kidname in kidnames:
+            if kidname:
+                new_user = {
+                    'parentName': parent_name,
+                    'kidName': kidname,
+                    'email': email,
+                    'phone':phone,
+                 }
+                result = users_collection.insert_one(new_user)
+                inserted_ids.append(str(result.inserted_id))  # Convert ObjectId to string
+        
+        return jsonify({'success': True, 'insertedIds': inserted_ids}), 201
     else:
         return jsonify({'error': 'Invalid data format.'}), 400
-
 
 @app.route('/signin', methods=['POST'])
 def signin():
