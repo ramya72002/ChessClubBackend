@@ -25,7 +25,6 @@ def home():
 
 def time_now():
     return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
 @app.route('/signup', methods=['POST'])
 def signup():
     user_data = request.get_json()
@@ -35,6 +34,11 @@ def signup():
             user_data.get('kidName1'),
             user_data.get('kidName2'),
             user_data.get('kidName3')
+        ]
+        schoolnames = [
+            user_data.get('schoolName1'),
+            user_data.get('schoolName2'),
+            user_data.get('schoolName3')
         ]
         email = user_data.get('email')
         phone = user_data.get('phone')
@@ -46,14 +50,15 @@ def signup():
 
         # Insert a record for each kid
         inserted_ids = []
-        for kidname in kidnames:
-            if kidname:
+        for kidname, schoolname in zip(kidnames, schoolnames):
+            if kidname and schoolname:
                 new_user = {
                     'parentName': parent_name,
                     'kidName': kidname,
+                    'schoolName': schoolname,
                     'email': email,
-                    'phone':phone,
-                 }
+                    'phone': phone,
+                }
                 result = users_collection.insert_one(new_user)
                 inserted_ids.append(str(result.inserted_id))  # Convert ObjectId to string
         
