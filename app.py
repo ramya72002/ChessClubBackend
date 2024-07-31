@@ -79,8 +79,8 @@ def signin():
     existing_user = users_collection.find_one({'email': email})
     if existing_user:
         # Get the current timestamp in IST
-        ist = pytz.timezone('Asia/Kolkata')
-        current_timestamp = datetime.now(ist)
+        us_time_zone = pytz.timezone('America/New_York')
+        current_timestamp = datetime.now(us_time_zone)
         formatted_timestamp = current_timestamp.isoformat()
         
         # Update the user's document with the current timestamp
