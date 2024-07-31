@@ -72,10 +72,16 @@ def signin():
     # Check if user exists
     existing_user = users_collection.find_one({'email': email})
     if existing_user:
+        # Update the user's document with the current timestamp
+        current_timestamp = datetime.now()
+        formatted_timestamp = current_timestamp.isoformat()
+        users_collection.update_one(
+            {'email': email},
+            {'$set': {'last_signin': formatted_timestamp}}
+        )
         return jsonify({'success': True, 'message': 'Sign in successful.'}), 200
     else:
         return jsonify({'error': 'Email not registered. Please sign up.'}), 404
-
 @app.route('/Club_users', methods=['GET'])
 def get_users():
     try:
