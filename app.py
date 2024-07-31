@@ -80,7 +80,7 @@ def signin():
         # Update the user's document with the current timestamp
         current_timestamp = datetime.now()
         formatted_timestamp = current_timestamp.isoformat()
-        users_collection.update_one(
+        users_collection.update_many(
             {'email': email},
             {'$set': {'last_signin': formatted_timestamp}}
         )
