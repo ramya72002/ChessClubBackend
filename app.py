@@ -4,6 +4,7 @@ from datetime import datetime
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
+import pytz
 
 MAX_RETRIES = 3
 RETRY_DELAY_SECONDS = 1
@@ -77,9 +78,12 @@ def signin():
     # Check if user exists
     existing_user = users_collection.find_one({'email': email})
     if existing_user:
-        # Update the user's document with the current timestamp
-        current_timestamp = datetime.now()
+        # Get the current timestamp in IST
+        ist = pytz.timezone('Asia/Kolkata')
+        current_timestamp = datetime.now(ist)
         formatted_timestamp = current_timestamp.isoformat()
+        
+        # Update the user's document with the current timestamp
         users_collection.update_many(
             {'email': email},
             {'$set': {'last_signin': formatted_timestamp}}
@@ -87,6 +91,8 @@ def signin():
         return jsonify({'success': True, 'message': 'Sign in successful.'}), 200
     else:
         return jsonify({'error': 'Email not registered. Please sign up.'}), 404
+
+
 @app.route('/Club_users', methods=['GET'])
 def get_users():
     try:

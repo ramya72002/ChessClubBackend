@@ -5,3 +5,4 @@ beautifulsoup4
 pymongo
 python-dotenv
 geopy
+pytz
